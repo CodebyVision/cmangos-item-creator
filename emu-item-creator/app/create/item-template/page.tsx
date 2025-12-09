@@ -8,7 +8,7 @@ import { Tabs, TabsContent, TabsList, TabsTrigger } from "@/components/ui/tabs";
 import { Card, CardContent, CardDescription, CardHeader, CardTitle } from "@/components/ui/card";
 import { Textarea } from "@/components/ui/textarea";
 import { Separator } from "@/components/ui/separator";
-import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from "@/components/ui/select";
+import { Select, SelectContent, SelectItem, SelectPopup, SelectTrigger, SelectValue } from "@/components/ui/select";
 import { Dialog, DialogContent, DialogDescription, DialogFooter, DialogHeader, DialogTitle } from "@/components/ui/dialog";
 import { ItemTemplate, defaultItemTemplate } from "@/lib/types/item-template";
 import { Copy, Download } from "lucide-react";
@@ -213,6 +213,41 @@ const itemSubclasses: Record<string, Array<{ value: string; label: string }>> = 
   ],
 };
 
+const itemFlags = [
+  { value: 0x00000001, label: "ITEM_FLAG_SOULBOUND" },
+  { value: 0x00000002, label: "ITEM_FLAG_CONJURED" },
+  { value: 0x00000004, label: "ITEM_FLAG_LOOTABLE" },
+  { value: 0x00000008, label: "ITEM_FLAG_HEROIC" },
+  { value: 0x00000010, label: "ITEM_FLAG_DEPRECATED" },
+  { value: 0x00000020, label: "ITEM_FLAG_INDESTRUCTIBLE" },
+  { value: 0x00000040, label: "ITEM_FLAG_NO_EQUIP_COOLDOWN" },
+  { value: 0x00000080, label: "ITEM_FLAG_NO_USE" },
+  { value: 0x00000100, label: "ITEM_FLAG_NO_STACK" },
+  { value: 0x00000200, label: "ITEM_FLAG_UNIQUE_EQUIPPED" },
+  { value: 0x00000400, label: "ITEM_FLAG_THROWABLE" },
+  { value: 0x00000800, label: "ITEM_FLAG_SPECIAL_USE" },
+  { value: 0x00001000, label: "ITEM_FLAG_BIND_ON_PICKUP" },
+  { value: 0x00002000, label: "ITEM_FLAG_BIND_ON_EQUIP" },
+  { value: 0x00004000, label: "ITEM_FLAG_BIND_ON_USE" },
+  { value: 0x00008000, label: "ITEM_FLAG_BIND_ON_ACCOUNT" },
+  { value: 0x00010000, label: "ITEM_FLAG_NO_SELL" },
+  { value: 0x00020000, label: "ITEM_FLAG_NO_REPAIR" },
+  { value: 0x00040000, label: "ITEM_FLAG_NO_DISENCHANT" },
+  { value: 0x00080000, label: "ITEM_FLAG_NO_AUCTION" },
+  { value: 0x00100000, label: "ITEM_FLAG_NO_TRADE" },
+  { value: 0x00200000, label: "ITEM_FLAG_NO_VENDOR" },
+  { value: 0x00400000, label: "ITEM_FLAG_NO_DESTROY" },
+  { value: 0x00800000, label: "ITEM_FLAG_NO_PICKUP" },
+  { value: 0x01000000, label: "ITEM_FLAG_NO_DROP" },
+  { value: 0x02000000, label: "ITEM_FLAG_NO_USE_IN_ARENA" },
+  { value: 0x04000000, label: "ITEM_FLAG_NO_USE_IN_BATTLEGROUND" },
+  { value: 0x08000000, label: "ITEM_FLAG_NO_USE_IN_RAID" },
+  { value: 0x10000000, label: "ITEM_FLAG_NO_USE_IN_DUNGEON" },
+  { value: 0x20000000, label: "ITEM_FLAG_NO_USE_IN_WORLD" },
+  { value: 0x40000000, label: "ITEM_FLAG_NO_USE_IN_PVP" },
+  { value: 0x80000000, label: "ITEM_FLAG_NO_USE_IN_PVE" },
+];
+
 export default function CreateItemTemplatePage() {
   const [formData, setFormData] = useState<ItemTemplate>(defaultItemTemplate);
   const [sqlOutput, setSqlOutput] = useState<string>("");
@@ -225,6 +260,32 @@ export default function CreateItemTemplatePage() {
       ...prev,
       [field]: value,
     }));
+  };
+
+  // Convert flags bitmask to array of flag values (as strings for Select component)
+  const getSelectedFlags = (): string[] => {
+    return itemFlags
+      .filter((flag) => (formData.Flags & flag.value) !== 0)
+      .map((flag) => flag.value.toString());
+  };
+
+  // Convert array of flag values (strings) to bitmask
+  const setSelectedFlags = (selectedValues: string[] | number[]) => {
+    const numericValues = selectedValues.map((v) => (typeof v === "string" ? parseInt(v, 10) : v));
+    const newFlags = numericValues.reduce((acc, flagValue) => acc | flagValue, 0);
+    updateField("Flags", newFlags);
+  };
+
+  // Render function for SelectValue
+  const renderFlagValue = (value: string[] | number[]) => {
+    if (!value || value.length === 0) {
+      return "Select flags…";
+    }
+    const firstValue = typeof value[0] === "string" ? parseInt(value[0], 10) : value[0];
+    const firstFlag = itemFlags.find((flag) => flag.value === firstValue);
+    const firstLabel = firstFlag ? firstFlag.label : "";
+    const additionalFlags = value.length > 1 ? ` (+${value.length - 1} more)` : "";
+    return firstLabel + additionalFlags;
   };
 
   const escapeSqlString = (str: string): string => {
@@ -481,13 +542,40 @@ export default function CreateItemTemplatePage() {
                 </div>
                 <div className="space-y-2">
                   <Label htmlFor="Flags">Flags</Label>
-                  <Input
-                    id="Flags"
-                    type="number"
-                    value={formData.Flags}
-                    onChange={(e) => updateField("Flags", parseInt(e.target.value) || 0)}
-                    min="0"
-                  />
+                  <Select
+                    aria-label="Select flags"
+                    value={getSelectedFlags()}
+                    onValueChange={(value) => {
+                      if (Array.isArray(value)) {
+                        setSelectedFlags(value);
+                      }
+                    }}
+                    multiple
+                  >
+                    <SelectTrigger id="Flags">
+                      <SelectValue>{renderFlagValue}</SelectValue>
+                    </SelectTrigger>
+                    <SelectPopup alignItemWithTrigger={false}>
+                      {itemFlags.map((flag) => (
+                        <SelectItem key={flag.value} value={flag.value.toString()}>
+                          {flag.label}
+                        </SelectItem>
+                      ))}
+                    </SelectPopup>
+                  </Select>
+                  <div className="mt-2">
+                    <Label htmlFor="Flags-value" className="text-xs text-muted-foreground">
+                      Flags Value: {formData.Flags} (0x{formData.Flags.toString(16).toUpperCase()})
+                    </Label>
+                    <Input
+                      id="Flags-value"
+                      type="number"
+                      value={formData.Flags}
+                      onChange={(e) => updateField("Flags", parseInt(e.target.value) || 0)}
+                      min="0"
+                      className="mt-1"
+                    />
+                  </div>
                 </div>
                 <div className="space-y-2">
                   <Label htmlFor="BuyCount">Buy Count</Label>
