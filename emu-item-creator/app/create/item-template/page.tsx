@@ -56,6 +56,17 @@ const qualityTypes = [
   { value: "7", label: "Heirloom" },
 ];
 
+const reputationRanks = [
+  { value: "0", label: "Hated" },
+  { value: "1", label: "Hostile" },
+  { value: "2", label: "Unfriendly" },
+  { value: "3", label: "Neutral" },
+  { value: "4", label: "Friendly" },
+  { value: "5", label: "Honored" },
+  { value: "6", label: "Revered" },
+  { value: "7", label: "Exalted" },
+];
+
 const itemClasses = [
   { value: "0", label: "Consumable" },
   { value: "1", label: "Container" },
@@ -844,13 +855,21 @@ export default function CreateItemTemplatePage() {
                 </div>
                 <div className="space-y-2">
                   <Label htmlFor="RequiredReputationRank">Required Reputation Rank</Label>
-                  <Input
-                    id="RequiredReputationRank"
-                    type="number"
-                    value={formData.RequiredReputationRank}
-                    onChange={(e) => updateField("RequiredReputationRank", parseInt(e.target.value) || 0)}
-                    min="0"
-                  />
+                  <Select
+                    value={formData.RequiredReputationRank.toString()}
+                    onValueChange={(value) => updateField("RequiredReputationRank", parseInt(value) || 0)}
+                  >
+                    <SelectTrigger id="RequiredReputationRank">
+                      <SelectValue placeholder="Select reputation rank" />
+                    </SelectTrigger>
+                    <SelectContent>
+                      {reputationRanks.map((rank) => (
+                        <SelectItem key={rank.value} value={rank.value}>
+                          {rank.label}
+                        </SelectItem>
+                      ))}
+                    </SelectContent>
+                  </Select>
                 </div>
                 <div className="space-y-2">
                   <Label htmlFor="AllowableClass">Allowable Class</Label>
