@@ -909,6 +909,16 @@ export default function CreateItemTemplatePage() {
                   />
                 </div>
               </div>
+              <div className="mt-6 space-y-2">
+                <Label htmlFor="description">Description</Label>
+                <Textarea
+                  id="description"
+                  value={formData.description}
+                  onChange={(e) => updateField("description", e.target.value)}
+                  placeholder="Item description"
+                  rows={3}
+                />
+              </div>
             </CardContent>
           </Card>
         </TabsContent>
@@ -1728,17 +1738,6 @@ export default function CreateItemTemplatePage() {
                 </div>
 
                 <Separator />
-
-                <div className="space-y-2">
-                  <Label htmlFor="description">Description</Label>
-                  <Textarea
-                    id="description"
-                    value={formData.description}
-                    onChange={(e) => updateField("description", e.target.value)}
-                    placeholder="Item description"
-                    rows={3}
-                  />
-                </div>
 
                 <div className="space-y-2">
                   <Label htmlFor="ScriptName">Script Name</Label>
