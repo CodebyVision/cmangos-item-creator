@@ -260,6 +260,27 @@ const allowableClasses = [
   { value: 0x00000400, label: "Druid" },
 ];
 
+const allowableRaces = [
+  { value: 0x00000001, label: "Human", raceId: 1 },
+  { value: 0x00000002, label: "Orc", raceId: 2 },
+  { value: 0x00000004, label: "Dwarf", raceId: 3 },
+  { value: 0x00000008, label: "Night Elf", raceId: 4 },
+  { value: 0x00000010, label: "Undead", raceId: 5 },
+  { value: 0x00000020, label: "Tauren", raceId: 6 },
+  { value: 0x00000040, label: "Gnome", raceId: 7 },
+  { value: 0x00000080, label: "Troll", raceId: 8 },
+  { value: 0x00000100, label: "Goblin", raceId: 9 },
+  { value: 0x00000200, label: "Blood Elf", raceId: 10 },
+  { value: 0x00000400, label: "Draenei", raceId: 11 },
+  { value: 0x00000800, label: "Fel Orc", raceId: 12 },
+  { value: 0x00001000, label: "Naga", raceId: 13 },
+  { value: 0x00002000, label: "Broken", raceId: 14 },
+  { value: 0x00004000, label: "Skeleton", raceId: 15 },
+  { value: 0x00008000, label: "Vrykul", raceId: 16 },
+  { value: 0x00010000, label: "Tuskarr", raceId: 17 },
+  { value: 0x00020000, label: "Forest Troll", raceId: 18 },
+];
+
 export default function CreateItemTemplatePage() {
   const [formData, setFormData] = useState<ItemTemplate>(defaultItemTemplate);
   const [sqlOutput, setSqlOutput] = useState<string>("");
@@ -329,6 +350,37 @@ export default function CreateItemTemplatePage() {
     const firstLabel = firstClass ? firstClass.label : "";
     const additionalClasses = value.length > 1 ? ` (+${value.length - 1} more)` : "";
     return firstLabel + additionalClasses;
+  };
+
+  // Convert AllowableRace bitmask to array of race values (as strings for Select component)
+  const getSelectedRaces = (): string[] => {
+    if (formData.AllowableRace === -1) return [];
+    return allowableRaces
+      .filter((race) => (formData.AllowableRace & race.value) !== 0)
+      .map((race) => race.value.toString());
+  };
+
+  // Convert array of race values (strings) to bitmask
+  const setSelectedRaces = (selectedValues: string[] | number[]) => {
+    if (selectedValues.length === 0) {
+      updateField("AllowableRace", -1);
+      return;
+    }
+    const numericValues = selectedValues.map((v) => (typeof v === "string" ? parseInt(v, 10) : v));
+    const newRaces = numericValues.reduce((acc, raceValue) => acc | raceValue, 0);
+    updateField("AllowableRace", newRaces);
+  };
+
+  // Render function for AllowableRace SelectValue
+  const renderRaceValue = (value: string[] | number[]) => {
+    if (!value || value.length === 0) {
+      return "Select races…";
+    }
+    const firstValue = typeof value[0] === "string" ? parseInt(value[0], 10) : value[0];
+    const firstRace = allowableRaces.find((race) => race.value === firstValue);
+    const firstLabel = firstRace ? firstRace.label : "";
+    const additionalRaces = value.length > 1 ? ` (+${value.length - 1} more)` : "";
+    return firstLabel + additionalRaces;
   };
 
   const escapeSqlString = (str: string): string => {
@@ -838,12 +890,39 @@ export default function CreateItemTemplatePage() {
                 </div>
                 <div className="space-y-2">
                   <Label htmlFor="AllowableRace">Allowable Race</Label>
-                  <Input
-                    id="AllowableRace"
-                    type="number"
-                    value={formData.AllowableRace}
-                    onChange={(e) => updateField("AllowableRace", parseInt(e.target.value) || -1)}
-                  />
+                  <Select
+                    aria-label="Select allowable races"
+                    value={getSelectedRaces()}
+                    onValueChange={(value) => {
+                      if (Array.isArray(value)) {
+                        setSelectedRaces(value);
+                      }
+                    }}
+                    multiple
+                  >
+                    <SelectTrigger id="AllowableRace">
+                      <SelectValue>{renderRaceValue}</SelectValue>
+                    </SelectTrigger>
+                    <SelectPopup alignItemWithTrigger={false}>
+                      {allowableRaces.map((race) => (
+                        <SelectItem key={race.value} value={race.value.toString()}>
+                          {race.label}
+                        </SelectItem>
+                      ))}
+                    </SelectPopup>
+                  </Select>
+                  <div className="mt-2">
+                    <Label htmlFor="AllowableRace-value" className="text-xs text-muted-foreground">
+                      AllowableRace Value: {formData.AllowableRace === -1 ? "-1 (All Races)" : `${formData.AllowableRace} (0x${formData.AllowableRace.toString(16).toUpperCase()})`}
+                    </Label>
+                    <Input
+                      id="AllowableRace-value"
+                      type="number"
+                      value={formData.AllowableRace}
+                      onChange={(e) => updateField("AllowableRace", parseInt(e.target.value) || -1)}
+                      className="mt-1"
+                    />
+                  </div>
                 </div>
                 <div className="space-y-2">
                   <Label htmlFor="maxcount">Max Count</Label>
