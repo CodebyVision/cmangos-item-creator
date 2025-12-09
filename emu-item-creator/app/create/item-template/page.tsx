@@ -11,7 +11,7 @@ import { Separator } from "@/components/ui/separator";
 import { Select, SelectContent, SelectItem, SelectPopup, SelectTrigger, SelectValue } from "@/components/ui/select";
 import { Dialog, DialogContent, DialogDescription, DialogFooter, DialogHeader, DialogTitle } from "@/components/ui/dialog";
 import { ItemTemplate, defaultItemTemplate } from "@/lib/types/item-template";
-import { Copy, Download } from "lucide-react";
+import { Copy, Download, Save, Upload } from "lucide-react";
 import { ModeToggle } from "@/components/mode-toggle";
 
 const inventoryTypes = [
@@ -536,6 +536,58 @@ export default function CreateItemTemplatePage() {
     }
   };
 
+  const saveTemplate = () => {
+    try {
+      const templateJson = JSON.stringify(formData, null, 2);
+      const blob = new Blob([templateJson], { type: "application/json" });
+      const url = URL.createObjectURL(blob);
+      const a = document.createElement("a");
+      a.href = url;
+      a.download = `item_template_${formData.entry || "new"}_${formData.name || "template"}.json`.replace(/[^a-z0-9_\-\.]/gi, "_");
+      document.body.appendChild(a);
+      a.click();
+      document.body.removeChild(a);
+      URL.revokeObjectURL(url);
+      showDialog("Template saved successfully!");
+    } catch (err) {
+      console.error("Failed to save template:", err);
+      showDialog("Failed to save template. Please try again.");
+    }
+  };
+
+  const loadTemplate = () => {
+    const input = document.createElement("input");
+    input.type = "file";
+    input.accept = ".json";
+    input.onchange = (e) => {
+      const file = (e.target as HTMLInputElement).files?.[0];
+      if (!file) return;
+
+      const reader = new FileReader();
+      reader.onload = (event) => {
+        try {
+          const content = event.target?.result as string;
+          const loadedData = JSON.parse(content) as ItemTemplate;
+          
+          // Validate that it's a valid ItemTemplate
+          if (typeof loadedData === "object" && loadedData !== null) {
+            // Merge with default template to ensure all fields are present
+            const mergedData = { ...defaultItemTemplate, ...loadedData };
+            setFormData(mergedData);
+            showDialog("Template loaded successfully!");
+          } else {
+            throw new Error("Invalid template format");
+          }
+        } catch (err) {
+          console.error("Failed to load template:", err);
+          showDialog("Failed to load template. Please ensure the file is a valid template JSON file.");
+        }
+      };
+      reader.readAsText(file);
+    };
+    input.click();
+  };
+
   return (
     <div className="container mx-auto py-8 px-4 max-w-7xl">
       <div className="mb-6 flex justify-between items-start">
@@ -546,10 +598,20 @@ export default function CreateItemTemplatePage() {
         <ModeToggle />
       </div>
 
-      <div className="mb-4 flex gap-4 items-center">
-        <Button onClick={generateSQL} size="lg">
-          Generate SQL
-        </Button>
+      <div className="mb-4 flex gap-4 items-center flex-wrap">
+        <div className="flex gap-2">
+          <Button onClick={generateSQL} size="lg">
+            Generate SQL
+          </Button>
+          <Button onClick={saveTemplate} size="lg" variant="outline">
+            <Save className="w-4 h-4 mr-2" />
+            Save Template
+          </Button>
+          <Button onClick={loadTemplate} size="lg" variant="outline">
+            <Upload className="w-4 h-4 mr-2" />
+            Load Template
+          </Button>
+        </div>
         <div className="flex items-center gap-2">
           <input
             type="checkbox"
