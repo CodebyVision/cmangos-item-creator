@@ -56,6 +56,163 @@ const qualityTypes = [
   { value: "7", label: "Heirloom" },
 ];
 
+const itemClasses = [
+  { value: "0", label: "Consumable" },
+  { value: "1", label: "Container" },
+  { value: "2", label: "Weapon" },
+  { value: "3", label: "Gem" },
+  { value: "4", label: "Armor" },
+  { value: "5", label: "Reagent" },
+  { value: "6", label: "Projectile" },
+  { value: "7", label: "Trade Goods" },
+  { value: "8", label: "Generic" },
+  { value: "9", label: "Recipe" },
+  { value: "10", label: "Money" },
+  { value: "11", label: "Quiver" },
+  { value: "12", label: "Quest" },
+  { value: "13", label: "Key" },
+  { value: "14", label: "Permanent" },
+  { value: "15", label: "Miscellaneous" },
+];
+
+const itemSubclasses: Record<string, Array<{ value: string; label: string }>> = {
+  "0": [ // Consumable
+    { value: "0", label: "Consumable" },
+    { value: "1", label: "Potion" },
+    { value: "2", label: "Elixir" },
+    { value: "3", label: "Flask" },
+    { value: "4", label: "Scroll" },
+    { value: "5", label: "Food & Drink" },
+    { value: "6", label: "Item Enhancement" },
+    { value: "7", label: "Bandage" },
+    { value: "8", label: "Other" },
+  ],
+  "1": [ // Container
+    { value: "0", label: "Bag" },
+    { value: "1", label: "Soul Bag" },
+    { value: "2", label: "Herb Bag" },
+    { value: "3", label: "Enchanting Bag" },
+    { value: "4", label: "Engineering Bag" },
+    { value: "5", label: "Gem Bag" },
+    { value: "6", label: "Mining Bag" },
+    { value: "7", label: "Leatherworking Bag" },
+    { value: "8", label: "Inscription Bag" },
+  ],
+  "2": [ // Weapon
+    { value: "0", label: "Axe (One-Handed)" },
+    { value: "1", label: "Axe (Two-Handed)" },
+    { value: "2", label: "Bow" },
+    { value: "3", label: "Gun" },
+    { value: "4", label: "Mace (One-Handed)" },
+    { value: "5", label: "Mace (Two-Handed)" },
+    { value: "6", label: "Polearm" },
+    { value: "7", label: "Sword (One-Handed)" },
+    { value: "8", label: "Sword (Two-Handed)" },
+    { value: "10", label: "Staff" },
+    { value: "13", label: "Fist Weapon" },
+    { value: "14", label: "Miscellaneous" },
+    { value: "15", label: "Dagger" },
+    { value: "16", label: "Thrown" },
+    { value: "17", label: "Spear" },
+    { value: "18", label: "Crossbow" },
+    { value: "19", label: "Wand" },
+    { value: "20", label: "Fishing Pole" },
+  ],
+  "3": [ // Gem
+    { value: "0", label: "Red" },
+    { value: "1", label: "Blue" },
+    { value: "2", label: "Yellow" },
+    { value: "3", label: "Purple" },
+    { value: "4", label: "Green" },
+    { value: "5", label: "Orange" },
+    { value: "6", label: "Meta" },
+    { value: "7", label: "Simple" },
+    { value: "8", label: "Prismatic" },
+  ],
+  "4": [ // Armor
+    { value: "0", label: "Miscellaneous" },
+    { value: "1", label: "Cloth" },
+    { value: "2", label: "Leather" },
+    { value: "3", label: "Mail" },
+    { value: "4", label: "Plate" },
+    { value: "5", label: "Buckler" },
+    { value: "6", label: "Shield" },
+    { value: "7", label: "Libram" },
+    { value: "8", label: "Idol" },
+    { value: "9", label: "Totem" },
+    { value: "10", label: "Sigil" },
+  ],
+  "5": [ // Reagent
+    { value: "0", label: "Reagent" },
+  ],
+  "6": [ // Projectile
+    { value: "0", label: "Wand" },
+    { value: "1", label: "Bolt" },
+    { value: "2", label: "Arrow" },
+    { value: "3", label: "Bullet" },
+    { value: "4", label: "Thrown" },
+  ],
+  "7": [ // Trade Goods
+    { value: "0", label: "Trade Goods" },
+    { value: "1", label: "Parts" },
+    { value: "2", label: "Explosives" },
+    { value: "3", label: "Devices" },
+    { value: "4", label: "Jewelcrafting" },
+    { value: "5", label: "Cloth" },
+    { value: "6", label: "Leather" },
+    { value: "7", label: "Metal & Stone" },
+    { value: "8", label: "Meat" },
+    { value: "9", label: "Herb" },
+    { value: "10", label: "Elemental" },
+    { value: "11", label: "Other" },
+    { value: "12", label: "Enchanting" },
+    { value: "13", label: "Materials" },
+    { value: "14", label: "Item Enchantment" },
+    { value: "15", label: "Weapon Enchantment" },
+  ],
+  "8": [ // Generic
+    { value: "0", label: "Generic" },
+  ],
+  "9": [ // Recipe
+    { value: "0", label: "Book" },
+    { value: "1", label: "Leatherworking" },
+    { value: "2", label: "Tailoring" },
+    { value: "3", label: "Engineering" },
+    { value: "4", label: "Blacksmithing" },
+    { value: "5", label: "Cooking" },
+    { value: "6", label: "Alchemy" },
+    { value: "7", label: "First Aid" },
+    { value: "8", label: "Enchanting" },
+    { value: "9", label: "Fishing" },
+    { value: "10", label: "Jewelcrafting" },
+  ],
+  "10": [ // Money
+    { value: "0", label: "Money" },
+  ],
+  "11": [ // Quiver
+    { value: "0", label: "Quiver" },
+    { value: "1", label: "Ammo Pouch" },
+  ],
+  "12": [ // Quest
+    { value: "0", label: "Quest" },
+  ],
+  "13": [ // Key
+    { value: "0", label: "Key" },
+    { value: "1", label: "Lockpick" },
+  ],
+  "14": [ // Permanent
+    { value: "0", label: "Permanent" },
+  ],
+  "15": [ // Miscellaneous
+    { value: "0", label: "Junk" },
+    { value: "1", label: "Reagent" },
+    { value: "2", label: "Pet" },
+    { value: "3", label: "Holiday" },
+    { value: "4", label: "Other" },
+    { value: "5", label: "Mount" },
+  ],
+};
+
 export default function CreateItemTemplatePage() {
   const [formData, setFormData] = useState<ItemTemplate>(defaultItemTemplate);
   const [sqlOutput, setSqlOutput] = useState<string>("");
@@ -255,23 +412,44 @@ export default function CreateItemTemplatePage() {
                 </div>
                 <div className="space-y-2">
                   <Label htmlFor="class">Class</Label>
-                  <Input
-                    id="class"
-                    type="number"
-                    value={formData.class}
-                    onChange={(e) => updateField("class", parseInt(e.target.value) || 0)}
-                    min="0"
-                  />
+                  <Select
+                    value={formData.class.toString()}
+                    onValueChange={(value) => {
+                      updateField("class", parseInt(value) || 0);
+                      // Reset subclass when class changes
+                      updateField("subclass", 0);
+                    }}
+                  >
+                    <SelectTrigger id="class">
+                      <SelectValue placeholder="Select class" />
+                    </SelectTrigger>
+                    <SelectContent>
+                      {itemClasses.map((itemClass) => (
+                        <SelectItem key={itemClass.value} value={itemClass.value}>
+                          {itemClass.label}
+                        </SelectItem>
+                      ))}
+                    </SelectContent>
+                  </Select>
                 </div>
                 <div className="space-y-2">
                   <Label htmlFor="subclass">Subclass</Label>
-                  <Input
-                    id="subclass"
-                    type="number"
-                    value={formData.subclass}
-                    onChange={(e) => updateField("subclass", parseInt(e.target.value) || 0)}
-                    min="0"
-                  />
+                  <Select
+                    value={formData.subclass.toString()}
+                    onValueChange={(value) => updateField("subclass", parseInt(value) || 0)}
+                    disabled={!itemSubclasses[formData.class.toString()]}
+                  >
+                    <SelectTrigger id="subclass">
+                      <SelectValue placeholder={itemSubclasses[formData.class.toString()] ? "Select subclass" : "Select class first"} />
+                    </SelectTrigger>
+                    <SelectContent>
+                      {itemSubclasses[formData.class.toString()]?.map((subclass) => (
+                        <SelectItem key={subclass.value} value={subclass.value}>
+                          {subclass.label}
+                        </SelectItem>
+                      ))}
+                    </SelectContent>
+                  </Select>
                 </div>
                 <div className="space-y-2">
                   <Label htmlFor="displayid">Display ID</Label>
