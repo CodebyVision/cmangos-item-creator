@@ -739,6 +739,25 @@ export default function CreateItemTemplatePage() {
                   />
                 </div>
                 <div className="space-y-2">
+                  <Label htmlFor="displayid">Display ID</Label>
+                  <Input
+                    id="displayid"
+                    type="number"
+                    value={formData.displayid}
+                    onChange={(e) => updateField("displayid", parseInt(e.target.value) || 0)}
+                    min="0"
+                  />
+                </div>
+                <div className="space-y-2">
+                  <Label htmlFor="name">Name *</Label>
+                  <Input
+                    id="name"
+                    value={formData.name}
+                    onChange={(e) => updateField("name", e.target.value)}
+                    placeholder="Item Name"
+                  />
+                </div>
+                <div className="space-y-2">
                   <Label htmlFor="bonding">Bonding</Label>
                   <Select
                     value={formData.bonding.toString()}
@@ -757,27 +776,18 @@ export default function CreateItemTemplatePage() {
                   </Select>
                 </div>
                 <div className="space-y-2">
-                  <Label htmlFor="name">Name *</Label>
-                  <Input
-                    id="name"
-                    value={formData.name}
-                    onChange={(e) => updateField("name", e.target.value)}
-                    placeholder="Item Name"
-                  />
-                </div>
-                <div className="space-y-2">
-                  <Label htmlFor="sheath">Sheath</Label>
+                  <Label htmlFor="InventoryType">Inventory Type</Label>
                   <Select
-                    value={formData.sheath.toString()}
-                    onValueChange={(value) => updateField("sheath", parseInt(value ?? "") || 0)}
+                    value={formData.InventoryType.toString()}
+                    onValueChange={(value) => updateField("InventoryType", parseInt(value ?? "") || 0)}
                   >
-                    <SelectTrigger id="sheath">
+                    <SelectTrigger id="InventoryType">
                       <SelectValue />
                     </SelectTrigger>
                     <SelectContent>
-                      {sheathTypes.map((sheathType) => (
-                        <SelectItem key={sheathType.value} value={sheathType.value}>
-                          {sheathType.label}
+                      {inventoryTypes.map((type) => (
+                        <SelectItem key={type.value} value={type.value}>
+                          {type.label}
                         </SelectItem>
                       ))}
                     </SelectContent>
@@ -825,14 +835,22 @@ export default function CreateItemTemplatePage() {
                   </Select>
                 </div>
                 <div className="space-y-2">
-                  <Label htmlFor="displayid">Display ID</Label>
-                  <Input
-                    id="displayid"
-                    type="number"
-                    value={formData.displayid}
-                    onChange={(e) => updateField("displayid", parseInt(e.target.value) || 0)}
-                    min="0"
-                  />
+                  <Label htmlFor="sheath">Sheath</Label>
+                  <Select
+                    value={formData.sheath.toString()}
+                    onValueChange={(value) => updateField("sheath", parseInt(value ?? "") || 0)}
+                  >
+                    <SelectTrigger id="sheath">
+                      <SelectValue />
+                    </SelectTrigger>
+                    <SelectContent>
+                      {sheathTypes.map((sheathType) => (
+                        <SelectItem key={sheathType.value} value={sheathType.value}>
+                          {sheathType.label}
+                        </SelectItem>
+                      ))}
+                    </SelectContent>
+                  </Select>
                 </div>
                 <div className="space-y-2">
                   <Label htmlFor="Quality">Quality</Label>
@@ -888,34 +906,6 @@ export default function CreateItemTemplatePage() {
                       className="mt-1"
                     />
                   </div>
-                </div>
-                <div className="space-y-2">
-                  <Label htmlFor="BuyCount">Buy Count</Label>
-                  <Input
-                    id="BuyCount"
-                    type="number"
-                    value={formData.BuyCount}
-                    onChange={(e) => updateField("BuyCount", parseInt(e.target.value) || 1)}
-                    min="1"
-                  />
-                </div>
-                <div className="space-y-2">
-                  <Label htmlFor="InventoryType">Inventory Type</Label>
-                  <Select
-                    value={formData.InventoryType.toString()}
-                    onValueChange={(value) => updateField("InventoryType", parseInt(value ?? "") || 0)}
-                  >
-                    <SelectTrigger id="InventoryType">
-                      <SelectValue />
-                    </SelectTrigger>
-                    <SelectContent>
-                      {inventoryTypes.map((type) => (
-                        <SelectItem key={type.value} value={type.value}>
-                          {type.label}
-                        </SelectItem>
-                      ))}
-                    </SelectContent>
-                  </Select>
                 </div>
                 <div className="space-y-2">
                   <Label htmlFor="ItemLevel">Item Level</Label>
@@ -1167,6 +1157,16 @@ export default function CreateItemTemplatePage() {
                     value={formData.maxcount}
                     onChange={(e) => updateField("maxcount", parseInt(e.target.value) || 0)}
                     min="0"
+                  />
+                </div>
+                <div className="space-y-2">
+                  <Label htmlFor="BuyCount">Buy Count</Label>
+                  <Input
+                    id="BuyCount"
+                    type="number"
+                    value={formData.BuyCount}
+                    onChange={(e) => updateField("BuyCount", parseInt(e.target.value) || 1)}
+                    min="1"
                   />
                 </div>
               </div>
