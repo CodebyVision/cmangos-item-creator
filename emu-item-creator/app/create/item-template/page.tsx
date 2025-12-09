@@ -164,6 +164,14 @@ const sheathTypes = [
   { value: "6", label: "Off-Hand" },
 ];
 
+const socketColors = [
+  { value: "0", label: "No Socket" },
+  { value: "1", label: "Meta" },
+  { value: "2", label: "Red" },
+  { value: "4", label: "Yellow" },
+  { value: "8", label: "Blue" },
+];
+
 const itemClasses = [
   { value: "0", label: "Consumable" },
   { value: "1", label: "Container" },
@@ -1755,12 +1763,21 @@ export default function CreateItemTemplatePage() {
                         <h4 className="font-semibold">Socket {num}</h4>
                         <div className="space-y-2">
                           <Label htmlFor={`socketColor_${num}`}>Socket Color</Label>
-                          <Input
-                            id={`socketColor_${num}`}
-                            type="number"
-                            value={formData[`socketColor_${num}` as keyof ItemTemplate] as number}
-                            onChange={(e) => updateField(`socketColor_${num}` as keyof ItemTemplate, parseInt(e.target.value) || 0)}
-                          />
+                          <Select
+                            value={formData[`socketColor_${num}` as keyof ItemTemplate].toString()}
+                            onValueChange={(value) => updateField(`socketColor_${num}` as keyof ItemTemplate, parseInt(value ?? "") || 0)}
+                          >
+                            <SelectTrigger id={`socketColor_${num}`}>
+                              <SelectValue />
+                            </SelectTrigger>
+                            <SelectContent>
+                              {socketColors.map((socketColor) => (
+                                <SelectItem key={socketColor.value} value={socketColor.value}>
+                                  {socketColor.label}
+                                </SelectItem>
+                              ))}
+                            </SelectContent>
+                          </Select>
                         </div>
                         <div className="space-y-2">
                           <Label htmlFor={`socketContent_${num}`}>Socket Content</Label>
