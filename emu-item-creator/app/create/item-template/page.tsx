@@ -12,6 +12,7 @@ import { Select, SelectContent, SelectItem, SelectPopup, SelectTrigger, SelectVa
 import { Dialog, DialogContent, DialogDescription, DialogFooter, DialogHeader, DialogTitle } from "@/components/ui/dialog";
 import { ItemTemplate, defaultItemTemplate } from "@/lib/types/item-template";
 import { Copy, Download } from "lucide-react";
+import { ModeToggle } from "@/components/mode-toggle";
 
 const inventoryTypes = [
   { value: "0", label: "Non-equippable" },
@@ -537,9 +538,12 @@ export default function CreateItemTemplatePage() {
 
   return (
     <div className="container mx-auto py-8 px-4 max-w-7xl">
-      <div className="mb-6">
-        <h1 className="text-3xl font-bold mb-2">Create Item Template</h1>
-        <p className="text-muted-foreground">Create CMANGOS TBC item templates and export as SQL</p>
+      <div className="mb-6 flex justify-between items-start">
+        <div>
+          <h1 className="text-3xl font-bold mb-2">Create Item Template</h1>
+          <p className="text-muted-foreground">Create CMANGOS TBC item templates and export as SQL</p>
+        </div>
+        <ModeToggle />
       </div>
 
       <div className="mb-4 flex gap-4 items-center">
