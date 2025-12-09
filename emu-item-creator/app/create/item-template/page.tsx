@@ -248,6 +248,18 @@ const itemFlags = [
   { value: 0x80000000, label: "ITEM_FLAG_NO_USE_IN_PVE" },
 ];
 
+const allowableClasses = [
+  { value: 0x00000001, label: "Warrior" },
+  { value: 0x00000002, label: "Paladin" },
+  { value: 0x00000004, label: "Hunter" },
+  { value: 0x00000008, label: "Rogue" },
+  { value: 0x00000010, label: "Priest" },
+  { value: 0x00000040, label: "Shaman" },
+  { value: 0x00000080, label: "Mage" },
+  { value: 0x00000100, label: "Warlock" },
+  { value: 0x00000400, label: "Druid" },
+];
+
 export default function CreateItemTemplatePage() {
   const [formData, setFormData] = useState<ItemTemplate>(defaultItemTemplate);
   const [sqlOutput, setSqlOutput] = useState<string>("");
@@ -286,6 +298,37 @@ export default function CreateItemTemplatePage() {
     const firstLabel = firstFlag ? firstFlag.label : "";
     const additionalFlags = value.length > 1 ? ` (+${value.length - 1} more)` : "";
     return firstLabel + additionalFlags;
+  };
+
+  // Convert AllowableClass bitmask to array of class values (as strings for Select component)
+  const getSelectedClasses = (): string[] => {
+    if (formData.AllowableClass === -1) return [];
+    return allowableClasses
+      .filter((cls) => (formData.AllowableClass & cls.value) !== 0)
+      .map((cls) => cls.value.toString());
+  };
+
+  // Convert array of class values (strings) to bitmask
+  const setSelectedClasses = (selectedValues: string[] | number[]) => {
+    if (selectedValues.length === 0) {
+      updateField("AllowableClass", -1);
+      return;
+    }
+    const numericValues = selectedValues.map((v) => (typeof v === "string" ? parseInt(v, 10) : v));
+    const newClasses = numericValues.reduce((acc, classValue) => acc | classValue, 0);
+    updateField("AllowableClass", newClasses);
+  };
+
+  // Render function for AllowableClass SelectValue
+  const renderClassValue = (value: string[] | number[]) => {
+    if (!value || value.length === 0) {
+      return "Select classes…";
+    }
+    const firstValue = typeof value[0] === "string" ? parseInt(value[0], 10) : value[0];
+    const firstClass = allowableClasses.find((cls) => cls.value === firstValue);
+    const firstLabel = firstClass ? firstClass.label : "";
+    const additionalClasses = value.length > 1 ? ` (+${value.length - 1} more)` : "";
+    return firstLabel + additionalClasses;
   };
 
   const escapeSqlString = (str: string): string => {
@@ -759,12 +802,39 @@ export default function CreateItemTemplatePage() {
                 </div>
                 <div className="space-y-2">
                   <Label htmlFor="AllowableClass">Allowable Class</Label>
-                  <Input
-                    id="AllowableClass"
-                    type="number"
-                    value={formData.AllowableClass}
-                    onChange={(e) => updateField("AllowableClass", parseInt(e.target.value) || -1)}
-                  />
+                  <Select
+                    aria-label="Select allowable classes"
+                    value={getSelectedClasses()}
+                    onValueChange={(value) => {
+                      if (Array.isArray(value)) {
+                        setSelectedClasses(value);
+                      }
+                    }}
+                    multiple
+                  >
+                    <SelectTrigger id="AllowableClass">
+                      <SelectValue>{renderClassValue}</SelectValue>
+                    </SelectTrigger>
+                    <SelectPopup alignItemWithTrigger={false}>
+                      {allowableClasses.map((cls) => (
+                        <SelectItem key={cls.value} value={cls.value.toString()}>
+                          {cls.label}
+                        </SelectItem>
+                      ))}
+                    </SelectPopup>
+                  </Select>
+                  <div className="mt-2">
+                    <Label htmlFor="AllowableClass-value" className="text-xs text-muted-foreground">
+                      AllowableClass Value: {formData.AllowableClass === -1 ? "-1 (All Classes)" : `${formData.AllowableClass} (0x${formData.AllowableClass.toString(16).toUpperCase()})`}
+                    </Label>
+                    <Input
+                      id="AllowableClass-value"
+                      type="number"
+                      value={formData.AllowableClass}
+                      onChange={(e) => updateField("AllowableClass", parseInt(e.target.value) || -1)}
+                      className="mt-1"
+                    />
+                  </div>
                 </div>
                 <div className="space-y-2">
                   <Label htmlFor="AllowableRace">Allowable Race</Label>
