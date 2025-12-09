@@ -582,13 +582,13 @@ export default function CreateItemTemplatePage() {
                   <Select
                     value={formData.class.toString()}
                     onValueChange={(value) => {
-                      updateField("class", parseInt(value) || 0);
+                      updateField("class", parseInt(value ?? "") || 0);
                       // Reset subclass when class changes
                       updateField("subclass", 0);
                     }}
                   >
                     <SelectTrigger id="class">
-                      <SelectValue placeholder="Select class" />
+                      <SelectValue />
                     </SelectTrigger>
                     <SelectContent>
                       {itemClasses.map((itemClass) => (
@@ -603,11 +603,11 @@ export default function CreateItemTemplatePage() {
                   <Label htmlFor="subclass">Subclass</Label>
                   <Select
                     value={formData.subclass.toString()}
-                    onValueChange={(value) => updateField("subclass", parseInt(value) || 0)}
+                    onValueChange={(value) => updateField("subclass", parseInt(value ?? "") || 0)}
                     disabled={!itemSubclasses[formData.class.toString()]}
                   >
                     <SelectTrigger id="subclass">
-                      <SelectValue placeholder={itemSubclasses[formData.class.toString()] ? "Select subclass" : "Select class first"} />
+                      <SelectValue />
                     </SelectTrigger>
                     <SelectContent>
                       {itemSubclasses[formData.class.toString()]?.map((subclass) => (
@@ -632,10 +632,10 @@ export default function CreateItemTemplatePage() {
                   <Label htmlFor="Quality">Quality</Label>
                   <Select
                     value={formData.Quality.toString()}
-                    onValueChange={(value) => updateField("Quality", parseInt(value) || 0)}
+                    onValueChange={(value) => updateField("Quality", parseInt(value ?? "") || 0)}
                   >
                     <SelectTrigger id="Quality">
-                      <SelectValue placeholder="Select quality" />
+                      <SelectValue />
                     </SelectTrigger>
                     <SelectContent>
                       {qualityTypes.map((type) => (
@@ -697,10 +697,10 @@ export default function CreateItemTemplatePage() {
                   <Label htmlFor="InventoryType">Inventory Type</Label>
                   <Select
                     value={formData.InventoryType.toString()}
-                    onValueChange={(value) => updateField("InventoryType", parseInt(value) || 0)}
+                    onValueChange={(value) => updateField("InventoryType", parseInt(value ?? "") || 0)}
                   >
                     <SelectTrigger id="InventoryType">
-                      <SelectValue placeholder="Select inventory type" />
+                      <SelectValue />
                     </SelectTrigger>
                     <SelectContent>
                       {inventoryTypes.map((type) => (
@@ -857,10 +857,10 @@ export default function CreateItemTemplatePage() {
                   <Label htmlFor="RequiredReputationRank">Required Reputation Rank</Label>
                   <Select
                     value={formData.RequiredReputationRank.toString()}
-                    onValueChange={(value) => updateField("RequiredReputationRank", parseInt(value) || 0)}
+                    onValueChange={(value) => updateField("RequiredReputationRank", parseInt(value ?? "") || 0)}
                   >
                     <SelectTrigger id="RequiredReputationRank">
-                      <SelectValue placeholder="Select reputation rank" />
+                      <SelectValue />
                     </SelectTrigger>
                     <SelectContent>
                       {reputationRanks.map((rank) => (
@@ -1003,6 +1003,40 @@ export default function CreateItemTemplatePage() {
             </CardHeader>
             <CardContent>
               <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-4">
+                <div className="space-y-2">
+                  <Label htmlFor="delay">Delay</Label>
+                  <Input
+                    id="delay"
+                    type="number"
+                    value={formData.delay}
+                    onChange={(e) => updateField("delay", parseInt(e.target.value) || 1000)}
+                    min="0"
+                  />
+                </div>
+                <div className="space-y-2">
+                  <Label htmlFor="ammo_type">Ammo Type</Label>
+                  <Input
+                    id="ammo_type"
+                    type="number"
+                    value={formData.ammo_type}
+                    onChange={(e) => updateField("ammo_type", parseInt(e.target.value) || 0)}
+                    min="0"
+                  />
+                </div>
+                <div className="space-y-2">
+                  <Label htmlFor="RangedModRange">Ranged Mod Range</Label>
+                  <Input
+                    id="RangedModRange"
+                    type="number"
+                    step="0.01"
+                    value={formData.RangedModRange}
+                    onChange={(e) => updateField("RangedModRange", parseFloat(e.target.value) || 0)}
+                    min="0"
+                  />
+                </div>
+              </div>
+              <Separator className="my-6" />
+              <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-4">
                 {[1, 2, 3, 4, 5].map((num) => (
                   <div key={num} className="space-y-2 border p-4 rounded-md">
                     <h4 className="font-semibold">Damage {num}</h4>
@@ -1120,37 +1154,6 @@ export default function CreateItemTemplatePage() {
                     type="number"
                     value={formData.arcane_res}
                     onChange={(e) => updateField("arcane_res", parseInt(e.target.value) || 0)}
-                    min="0"
-                  />
-                </div>
-                <div className="space-y-2">
-                  <Label htmlFor="delay">Delay</Label>
-                  <Input
-                    id="delay"
-                    type="number"
-                    value={formData.delay}
-                    onChange={(e) => updateField("delay", parseInt(e.target.value) || 1000)}
-                    min="0"
-                  />
-                </div>
-                <div className="space-y-2">
-                  <Label htmlFor="ammo_type">Ammo Type</Label>
-                  <Input
-                    id="ammo_type"
-                    type="number"
-                    value={formData.ammo_type}
-                    onChange={(e) => updateField("ammo_type", parseInt(e.target.value) || 0)}
-                    min="0"
-                  />
-                </div>
-                <div className="space-y-2">
-                  <Label htmlFor="RangedModRange">Ranged Mod Range</Label>
-                  <Input
-                    id="RangedModRange"
-                    type="number"
-                    step="0.01"
-                    value={formData.RangedModRange}
-                    onChange={(e) => updateField("RangedModRange", parseFloat(e.target.value) || 0)}
                     min="0"
                   />
                 </div>
