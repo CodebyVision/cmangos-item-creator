@@ -142,6 +142,18 @@ const bondingTypes = [
   { value: "4", label: "Quest item" },
 ];
 
+const materialTypes = [
+  { value: "0", label: "Consumable" },
+  { value: "1", label: "Metal" },
+  { value: "2", label: "Wood" },
+  { value: "3", label: "Liquid" },
+  { value: "4", label: "Cloth" },
+  { value: "5", label: "Leather" },
+  { value: "6", label: "Stone" },
+  { value: "7", label: "Food" },
+  { value: "8", label: "Misc" },
+];
+
 const itemClasses = [
   { value: "0", label: "Consumable" },
   { value: "1", label: "Container" },
@@ -1503,12 +1515,21 @@ export default function CreateItemTemplatePage() {
                   </div>
                   <div className="space-y-2">
                     <Label htmlFor="Material">Material</Label>
-                    <Input
-                      id="Material"
-                      type="number"
-                      value={formData.Material}
-                      onChange={(e) => updateField("Material", parseInt(e.target.value) || 0)}
-                    />
+                    <Select
+                      value={formData.Material.toString()}
+                      onValueChange={(value) => updateField("Material", parseInt(value ?? "") || 0)}
+                    >
+                      <SelectTrigger id="Material">
+                        <SelectValue />
+                      </SelectTrigger>
+                      <SelectContent>
+                        {materialTypes.map((materialType) => (
+                          <SelectItem key={materialType.value} value={materialType.value}>
+                            {materialType.label}
+                          </SelectItem>
+                        ))}
+                      </SelectContent>
+                    </Select>
                   </div>
                   <div className="space-y-2">
                     <Label htmlFor="sheath">Sheath</Label>
