@@ -154,6 +154,16 @@ const materialTypes = [
   { value: "8", label: "Misc" },
 ];
 
+const sheathTypes = [
+  { value: "0", label: "No Sheath" },
+  { value: "1", label: "Two-Handed" },
+  { value: "2", label: "Staff" },
+  { value: "3", label: "One-Handed" },
+  { value: "4", label: "Shield" },
+  { value: "5", label: "Enchanter's Rod" },
+  { value: "6", label: "Off-Hand" },
+];
+
 const itemClasses = [
   { value: "0", label: "Consumable" },
   { value: "1", label: "Container" },
@@ -746,6 +756,24 @@ export default function CreateItemTemplatePage() {
                     onChange={(e) => updateField("name", e.target.value)}
                     placeholder="Item Name"
                   />
+                </div>
+                <div className="space-y-2">
+                  <Label htmlFor="sheath">Sheath</Label>
+                  <Select
+                    value={formData.sheath.toString()}
+                    onValueChange={(value) => updateField("sheath", parseInt(value ?? "") || 0)}
+                  >
+                    <SelectTrigger id="sheath">
+                      <SelectValue />
+                    </SelectTrigger>
+                    <SelectContent>
+                      {sheathTypes.map((sheathType) => (
+                        <SelectItem key={sheathType.value} value={sheathType.value}>
+                          {sheathType.label}
+                        </SelectItem>
+                      ))}
+                    </SelectContent>
+                  </Select>
                 </div>
                 <div className="space-y-2">
                   <Label htmlFor="class">Class</Label>
@@ -1530,16 +1558,6 @@ export default function CreateItemTemplatePage() {
                         ))}
                       </SelectContent>
                     </Select>
-                  </div>
-                  <div className="space-y-2">
-                    <Label htmlFor="sheath">Sheath</Label>
-                    <Input
-                      id="sheath"
-                      type="number"
-                      value={formData.sheath}
-                      onChange={(e) => updateField("sheath", parseInt(e.target.value) || 0)}
-                      min="0"
-                    />
                   </div>
                   <div className="space-y-2">
                     <Label htmlFor="RandomProperty">Random Property</Label>
