@@ -1,6 +1,9 @@
 # CMangos Item Creator Tool
 
-Supports: tbc cmangos
+Supported emulators:
+| Emulator | Expansion |
+| -------- | ----------|
+| CMangos | TBC|
 
 App developed with next.js framework, please follow this guide on how to set it up.
 
